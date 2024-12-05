@@ -18,6 +18,8 @@ export default function PhotoSelectorScreen() {
   const [photos, setPhotos] = useState<{ uri: string; kept: boolean; loading: boolean }[]>(Array(6).fill({ uri: '', kept: false, loading: false }));
   const [fetchCount, setFetchCount] = useState(0);
   const fetchLimit = 6; // Maximum number of fetches allowed
+  const isAnyPhotoLoading = photos.some((photo) => photo.loading);
+
 
   // Request photo permissions on mount
   useEffect(() => {
@@ -151,16 +153,17 @@ export default function PhotoSelectorScreen() {
         <TouchableOpacity
           style={[styles.button, allPhotosKept ? styles.confirmButton : styles.fetchButton]}
           onPress={allPhotosKept ? () => Alert.alert('Confirmed!') : fetchPhotos}
-          disabled={fetchCount >= fetchLimit}
+          disabled={isAnyPhotoLoading || fetchCount >= fetchLimit}
         >
-          <Text style={styles.buttonText}>
-            {allPhotosKept
-              ? 'Confirm?'
-              : fetchCount < fetchLimit
-              ? `Fetch (${fetchLimit - fetchCount} left)`
-              : 'No Fetches Left'}
-          </Text>
+        <Text style={styles.buttonText}>
+          {allPhotosKept ? 'Confirm?' : 'Fetch'}
+        </Text>
         </TouchableOpacity>
+        {!allPhotosKept && (
+        <View style={styles.fetchCounterWrapper}>
+          <Text style={styles.fetchCounterText}>{fetchLimit - fetchCount}</Text>
+        </View>
+  )}
       </View>
     </SafeAreaView>
   );
@@ -168,18 +171,21 @@ export default function PhotoSelectorScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
   },
   contentContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'blue',
   },
   buttonContainer: {
     paddingVertical: 10,
     alignItems: 'center',
-    marginTop: -20,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: 'red',
   },
   button: {
     paddingVertical: 30,
@@ -190,7 +196,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 5,
-    marginBottom: 50,
+    marginLeft: 25,
   },
   fetchButton: {
     backgroundColor: '#007AFF',
@@ -200,9 +206,26 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 25,
     fontWeight: '600',
     textAlign: 'center',
+  },
+
+  fetchCounterWrapper: {
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    borderRadius: 100,
+    width: 75,
+    height: 75,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 30,
+
+  },
+  fetchCounterText: {
+    fontSize: 35,
+    fontWeight: '600',
+    color: '#007AFF',
   },
   photoList: {
     justifyContent: 'center',
