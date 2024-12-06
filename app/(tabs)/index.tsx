@@ -179,12 +179,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonContainer: {
+    top: 14,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    paddingBottom: 30,
+    paddingBottom: 100,
   },
   button: {
+    position: 'absolute',
     paddingVertical: 15,
     paddingHorizontal: 50,
     borderRadius: 100,
@@ -193,10 +195,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 5,
-    marginLeft: 85,
+    bottom: 100,
   },
   fetchButton: {
-    backgroundColor: colors.ivory,
+    backgroundColor: colors.volt,
   },
   confirmButton: {
     backgroundColor: colors.volt,
@@ -206,23 +208,24 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '600',
     textAlign: 'center',
+    fontFamily: 'Outfit',
   },
 
   fetchCounterWrapper: {
     borderWidth: 1,
-    borderColor: colors.volt,
+    borderColor: colors.detail,
     borderRadius: 100,
-    width: 55,
-    height: 55,
+    width: 60,
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 30,
-
+    left: 135,
   },
   fetchCounterText: {
     fontSize: 35,
     fontWeight: '400',
     color: colors.volt,
+    fontFamily: 'Outfit',
   },
   photoList: {
     justifyContent: 'center',
@@ -246,7 +249,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0, 122, 255, 0.4)',
+    backgroundColor: 'rgba(208, 240, 25, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -262,7 +265,9 @@ const styles = StyleSheet.create({
   emptySlot: {
     width: 180,
     height: 180,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: colors.night,
     borderRadius: 3,
+    borderWidth: 1,
+    borderColor: colors.detail,
   },
 });

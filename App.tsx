@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TouchableOpacity } from 'react-native';
 import SignUpScreen from './app/auth/SignUpScreen';
 import PhotoSelectorScreen from './app/(tabs)';
 import HomeScreen from './app/(tabs)/HomeScreen';
@@ -45,13 +44,37 @@ function ProfileStackNavigator() {
 
 function MainTabNavigator() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator screenOptions={{ 
+            headerShown: false,
+            tabBarShowLabel: false, 
+            tabBarStyle: {
+                backgroundColor: '#111111',
+                height: 95,
+                paddingTop: 15,
+                borderTopColor: '#1f1f1f',
+            },
+            tabBarActiveTintColor: '#D0F019',
+            tabBarInactiveTintColor: '#A2A697',
+            tabBarItemStyle: {
+                justifyContent: 'center',
+                alignItems: 'center',
+            }
+        }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }) => <Icon name="home" color={color} size={size} />,
+          tabBarIcon: ({ color }) => (<Image
+            source={require('./assets/images/home.png')}
+            style={{ 
+                width: 22, 
+                height: 22, 
+                tintColor: color,
+                marginRight: 14, 
+            }}
+          />),
         }}
       />
       <Tab.Screen
@@ -59,15 +82,34 @@ function MainTabNavigator() {
         component={PhotoSelectorScreen}
         options={{
           tabBarLabel: 'Fetch',
-          tabBarIcon: ({ color, size }) => <Icon name="add-circle-outline" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <Image
+              source={require('./assets/images/ball.png')} 
+              style={{ 
+                width: size, 
+                height: size, 
+                tintColor: color,
+            }}
+            />
+          ),
         }}
-      />
+      />      
       <Tab.Screen
         name="Profile"
         component={ProfileStackNavigator}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => <Icon name="person" color={color} size={size} />,
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('./assets/images/profile.png')}
+              style= {{ 
+                width: 22, 
+                height: 22, 
+                tintColor: color, 
+                marginLeft: 14,
+            }}
+            />
+          ),
         }}
       />
     </Tab.Navigator>
