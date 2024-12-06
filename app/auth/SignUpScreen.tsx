@@ -1,35 +1,41 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../types/types'; // Assuming you have defined the root stack types
+import colors from '@/styles/theme';
 
-export default function SignUpScreen() {
-  const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignUp'>;
+
+interface Props {
+  navigation: SignUpScreenNavigationProp;
+}
+
+export default function SignUpScreen({ navigation }: Props) {
+  const [username, setUsername] = useState<string>(''); // Type explicitly set to string
+  const [password, setPassword] = useState<string>(''); // Type explicitly set to string
+  const [email, setEmail] = useState<string>(''); // Type explicitly set to string
 
   const handleSignUp = () => {
-    // Add form validation here, e.g., check if passwords match, if email is valid
-    if (password !== confirmPassword) {
-      alert('Passwords do not match.');
-      return;
-    }
-
-    // You can add a mock sign-up function here for now
-    // After the user signs up successfully, navigate them to the collection fetch screen
-    navigation.navigate('CollectionFetch');
+    console.log('Sign up with:', username, password, email);
+    // Navigate to the Main Tabs screen after sign up
+    navigation.navigate('Main');
   };
+  
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>fetch</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
@@ -38,48 +44,47 @@ export default function SignUpScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-      />
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 }
 
+// Styling (for reference)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    alignItems: 'center',
+    backgroundColor: colors.night,
   },
   title: {
-    fontSize: 24,
+    fontSize: 50,
     fontWeight: 'bold',
-    textAlign: 'center',
+    fontFamily: 'Outfit',
     marginBottom: 20,
+    color: colors.ivory,
   },
   input: {
+    width: '80%',
+    height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.volt,
     borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
+    paddingHorizontal: 10,
+    marginVertical: 10,
   },
   button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
+    backgroundColor: colors.volt,
+    paddingVertical: 15,
+    paddingHorizontal: 50,
     borderRadius: 5,
-    alignItems: 'center',
+    marginTop: 20,
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: colors.pine,
+    fontWeight: 'bold',
+    fontFamily: 'Outfit',
   },
 });

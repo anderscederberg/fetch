@@ -12,6 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
+import colors from '@/styles/theme';
 
 export default function PhotoSelectorScreen() {
   const [permission, setPermission] = useState<boolean | null>(null);
@@ -156,7 +157,7 @@ export default function PhotoSelectorScreen() {
           disabled={isAnyPhotoLoading || fetchCount >= fetchLimit}
         >
         <Text style={styles.buttonText}>
-          {allPhotosKept ? 'Confirm?' : 'Fetch'}
+          {allPhotosKept ? 'Confirm?' : 'fetch'}
         </Text>
         </TouchableOpacity>
         {!allPhotosKept && (
@@ -171,24 +172,20 @@ export default function PhotoSelectorScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.night,
   },
   contentContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'blue',
   },
   buttonContainer: {
-    paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: 'red',
+    paddingBottom: 30,
   },
   button: {
-    paddingVertical: 30,
+    paddingVertical: 15,
     paddingHorizontal: 50,
     borderRadius: 100,
     shadowColor: '#000',
@@ -196,16 +193,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 5,
-    marginLeft: 25,
+    marginLeft: 85,
   },
   fetchButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.ivory,
   },
   confirmButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: colors.volt,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.pine,
     fontSize: 25,
     fontWeight: '600',
     textAlign: 'center',
@@ -213,10 +210,10 @@ const styles = StyleSheet.create({
 
   fetchCounterWrapper: {
     borderWidth: 1,
-    borderColor: '#007AFF',
+    borderColor: colors.volt,
     borderRadius: 100,
-    width: 75,
-    height: 75,
+    width: 55,
+    height: 55,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 30,
@@ -224,8 +221,8 @@ const styles = StyleSheet.create({
   },
   fetchCounterText: {
     fontSize: 35,
-    fontWeight: '600',
-    color: '#007AFF',
+    fontWeight: '400',
+    color: colors.volt,
   },
   photoList: {
     justifyContent: 'center',
