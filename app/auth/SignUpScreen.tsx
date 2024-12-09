@@ -21,22 +21,20 @@ export default function SignUpScreen({ navigation }: Props) {
   const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', (event) => {
-      if (event) {
-        Animated.timing(translateY, {
-          toValue: -event.endCoordinates.height / 2, // Adjust this value as needed
-          duration: 300,
-          easing: Easing.ease,
-          useNativeDriver: true,
-        }).start();
-      }
+    const keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', () => {
+      // Always move up to a fixed height when the keyboard appears
+      Animated.timing(translateY, {
+        toValue: -120, // Fixed value to lift inputs above keyboard (adjust as needed)
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     });
 
     const keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      // Reset to original position when the keyboard is dismissed
       Animated.timing(translateY, {
         toValue: 0,
         duration: 300,
-        easing: Easing.ease,
         useNativeDriver: true,
       }).start();
     });
@@ -95,45 +93,55 @@ export default function SignUpScreen({ navigation }: Props) {
   });
 
   return (
-    <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
+<View style={{ 
+    flex: 1,
+    backgroundColor: colors.night, 
+    }}>
+      <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
         <Animated.Image 
-            source={require('../../assets/images/ball-large.png')}
-            style={[styles.logo, { transform: [{ rotate: spin }] }]}
-            resizeMode="contain"
+          source={require('../../assets/images/ball-large.png')}
+          style={[styles.logo, { transform: [{ rotate: spin }] }]}
+          resizeMode="contain"
         />
-        <Text style={styles.title}>fetch</Text>
+        <Text 
+            style={styles.title}
+            onPress={() => navigation.navigate('Main')}
+        >fetch</Text>
         <Text style={styles.subtitle}>create account</Text>
         <TextInput
-            style={styles.input}
-            placeholder="username"
-            placeholderTextColor={colors.pine}
-            value={username}
-            onChangeText={setUsername}
+          style={styles.input}
+          placeholder="username"
+          placeholderTextColor={colors.ash}
+          value={username}
+          onChangeText={setUsername}
         />
         <TextInput
-            style={styles.input}
-            placeholder="email"
-            placeholderTextColor={colors.pine}
-            value={email}
-            onChangeText={setEmail}
+          style={styles.input}
+          placeholder="email"
+          placeholderTextColor={colors.ash}
+          value={email}
+          onChangeText={setEmail}
         />
         <TextInput
-            style={styles.input}
-            placeholder="password"
-            placeholderTextColor={colors.pine}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
+          style={styles.input}
+          placeholder="password"
+          placeholderTextColor={colors.ash}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
         />
+      </Animated.View>
+      
+      <View style={styles.buttonContainer}>
         <TouchableOpacity
-            style={[styles.button, !allFieldsFilled && styles.buttonDisabled]}
-            onPress={handleSignUp}
-            disabled={!allFieldsFilled}
+          style={[styles.button, !allFieldsFilled && styles.buttonDisabled]}
+          onPress={handleSignUp}
+          disabled={!allFieldsFilled}
         >
-            <Text style={[styles.buttonText, !allFieldsFilled && styles.buttonTextDisabled]}>let's go</Text>
-        </TouchableOpacity>    
-    </Animated.View>
-  );
+          <Text style={[styles.buttonText, !allFieldsFilled && styles.buttonTextDisabled]}>let's go</Text>
+        </TouchableOpacity>
+      </View>
+    </View>  );
 }
 
 const styles = StyleSheet.create({
@@ -146,7 +154,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.night,
     paddingBottom: 20,
   },
   title: {
@@ -160,27 +167,32 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '400',
     fontFamily: 'Outfit',
-    color: colors.ash,
-    marginBottom: 20,
+    color: colors.ivory,
+    marginBottom: 11,
   },
   input: {
     width: '80%',
     height: 50,
     borderWidth: 1,
-    borderColor: colors.detail,
+    borderColor: colors.pine,
     borderRadius: 100,
     paddingHorizontal: 20,
     marginVertical: 10,
     fontFamily: 'Outfit',
     color: colors.ivory,
   },
+
+buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 50,
+},
   button: {
     backgroundColor: colors.volt,
     paddingVertical: 15,
     paddingHorizontal: 50,
     borderRadius: 100,
     width: '80%',
-    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },

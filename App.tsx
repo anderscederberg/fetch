@@ -17,12 +17,23 @@ const ProfileStack = createStackNavigator();
 
 function ProfileStackNavigator() {
   return (
-    <ProfileStack.Navigator>
+    <ProfileStack.Navigator
+        screenOptions={{
+            headerStyle: {
+                backgroundColor: '#111111',
+                borderBottomWidth: 1,
+                borderBottomColor: '#1f1f1f',
+                height: 111,
+            },
+            headerShown: false,
+            
+        }}
+    >
       <ProfileStack.Screen
         name="Profile"
         component={ProfileScreen}
         options={({ navigation }) => ({
-          title: 'Profile',
+          title: 'you',
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 15 }}
