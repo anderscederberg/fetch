@@ -6,7 +6,7 @@ const colors = {
     ivory: '#FCFDED',
     night: '#111111',
     ash: '#A2A697',
-    detail: '#1f1f1f',
+    detail: '#2f2f2f',
 
   };
   

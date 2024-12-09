@@ -62,7 +62,7 @@ function MainTabNavigator() {
                 backgroundColor: '#111111',
                 height: 95,
                 paddingTop: 15,
-                borderTopColor: '#1f1f1f',
+                borderTopColor: '#2f2f2f',
             },
             tabBarActiveTintColor: '#D0F019',
             tabBarInactiveTintColor: '#A2A697',
