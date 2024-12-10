@@ -3,11 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/types/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 
 export default function ProfileScreen() {
 
     const [profileImage, setProfileImage] = useState<string | null>(null);
+
     const [location, setLocation] = useState<string | null>('Fetching location...');
+    
+    const navigation = useNavigation<ProfileScreenNavigationProp>();
 
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -42,13 +50,16 @@ export default function ProfileScreen() {
         };
 
         fetchLocation();
-    })
+    }, []);
 
   return (
     <View style={styles.container}>
         <View style={styles.profileHeader}>
             <Text style={styles.youText}>you</Text>
-            <TouchableOpacity>
+            <TouchableOpacity 
+                style={styles.settingsWrapper}
+                onPress={() => navigation.navigate('Settings')}
+            >
                 <Image 
                     source={require('../../assets/images/settings.png')} 
                     style={styles.settings}
@@ -108,24 +119,35 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.night,
     height: '100%',
-    paddingTop: 75,
+    paddingTop: 65,
     alignItems: 'center',
   },
   profileHeader: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    borderWidth: 1,
+    // borderWidth: 1,
+    marginBottom: 20,
+    gap: 123,
+    width: '90%',
   },
   settings: {
     width: 25,
     height: 25,
+    margin: 0,
+    padding: 0,
+  },
+
+  settingsWrapper: {
+    borderWidth: 1,
+    padding: 5,
+    borderColor: colors.detail,
+    borderRadius: 100,
   },
   youText: {
     color: colors.volt,
     fontFamily: 'Outfit',
     fontSize: 20,
-    marginBottom: 25,
   },
   profileMain: {
     flexDirection: 'column',
@@ -176,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    gap: 11,
+    gap: 5,
     padding: 0,
     margin: 0,
   },

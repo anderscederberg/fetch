@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SignUpScreen from './app/auth/SignUpScreen';
 import PhotoSelectorScreen from './app/(tabs)';
@@ -10,48 +10,35 @@ import ProfileScreen from './app/(tabs)/ProfileScreen';
 import SettingsScreen from './app/(tabs)/SettingsScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFonts } from 'expo-font';
+import { enableScreens } from 'react-native-screens';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
+
 const Tab = createBottomTabNavigator();
-const ProfileStack = createStackNavigator();
+
+const ProfileStack = createNativeStackNavigator();
 
 function ProfileStackNavigator() {
-  return (
-    <ProfileStack.Navigator
-        screenOptions={{
-            headerStyle: {
-                backgroundColor: '#111111',
-                borderBottomWidth: 1,
-                borderBottomColor: '#1f1f1f',
-                height: 111,
-            },
-            headerShown: false,
-            
-        }}
-    >
-      <ProfileStack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={({ navigation }) => ({
-          title: 'you',
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ marginRight: 15 }}
-              onPress={() => navigation.navigate('Settings')}
-            >
-              <Icon name="settings" size={24} color="#007AFF" />
-            </TouchableOpacity>
-          ),
-        })}
-      />
-      <ProfileStack.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{ title: 'Settings' }}
-      />
-    </ProfileStack.Navigator>
-  );
-}
+    return (
+      <ProfileStack.Navigator>
+        <ProfileStack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            headerShown: false, // Hide the header for the Profile screen
+          }}
+        />
+        <ProfileStack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            headerShown: false, // Hide the header for the Settings screen
+            presentation: 'modal', // Makes it behave like a modal overlay
+          }}
+        />
+      </ProfileStack.Navigator>
+    );
+  }
 
 function MainTabNavigator() {
   return (
@@ -60,7 +47,7 @@ function MainTabNavigator() {
             tabBarShowLabel: false, 
             tabBarStyle: {
                 backgroundColor: '#111111',
-                height: 95,
+                height: 85,
                 paddingTop: 15,
                 borderTopColor: '#2f2f2f',
             },
@@ -152,7 +139,10 @@ export default function App() {
         <Stack.Screen
           name="Main"
           component={MainTabNavigator}
-          options={{ headerShown: false }}
+          options={{ 
+            headerShown: false,
+            gestureEnabled: false, 
+        }}
         />
       </Stack.Navigator>
     </NavigationContainer>

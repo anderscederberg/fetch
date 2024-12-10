@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 50,
     borderWidth: 1,
-    borderColor: colors.pine,
+    borderColor: colors.detail,
     borderRadius: 100,
     paddingHorizontal: 20,
     marginVertical: 10,
@@ -203,7 +203,7 @@ buttonContainer: {
   },
 
   buttonDisabled: {
-    backgroundColor: colors.pine,
+    backgroundColor: colors.detail,
   },
   buttonTextDisabled: {
     color: colors.night,
