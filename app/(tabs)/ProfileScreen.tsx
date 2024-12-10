@@ -55,9 +55,10 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
         <View style={styles.profileHeader}>
+            <Text style={styles.fetchText}>fetch</Text>
             <Text style={styles.youText}>you</Text>
             <TouchableOpacity 
-                style={styles.settingsWrapper}
+                // style={styles.settingsWrapper}
                 onPress={() => navigation.navigate('Settings')}
             >
                 <Image 
@@ -124,12 +125,25 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    // borderWidth: 1,
     marginBottom: 20,
-    gap: 123,
     width: '90%',
+    paddingVertical: 11,
+    paddingHorizontal: 25,
+    borderRadius: 100,
+    borderColor: colors.detail,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  fetchText: {
+    color: colors.ivory,
+    fontFamily: 'Outfit',
+    fontSize: 30,
+    fontWeight: 'bold',
   },
   settings: {
     width: 25,
@@ -138,16 +152,17 @@ const styles = StyleSheet.create({
     padding: 0,
   },
 
-  settingsWrapper: {
-    borderWidth: 1,
-    padding: 5,
-    borderColor: colors.detail,
-    borderRadius: 100,
-  },
+  // settingsWrapper: {
+  //   borderWidth: 1,
+  //   padding: 5,
+  //   borderColor: colors.detail,
+  //   borderRadius: 100,
+  // },
   youText: {
     color: colors.volt,
     fontFamily: 'Outfit',
     fontSize: 20,
+    marginRight: 45,
   },
   profileMain: {
     flexDirection: 'column',

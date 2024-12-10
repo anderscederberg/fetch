@@ -150,8 +150,7 @@ export default function PhotoSelectorScreen() {
           )}
         />
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
+      <TouchableOpacity
           style={[styles.button, allPhotosKept ? styles.confirmButton : styles.fetchButton]}
           onPress={allPhotosKept ? () => Alert.alert('Confirmed!') : fetchPhotos}
           disabled={isAnyPhotoLoading || fetchCount >= fetchLimit}
@@ -159,13 +158,12 @@ export default function PhotoSelectorScreen() {
         <Text style={styles.buttonText}>
           {allPhotosKept ? 'Confirm?' : 'fetch'}
         </Text>
-        </TouchableOpacity>
-        {!allPhotosKept && (
-        <View style={styles.fetchCounterWrapper}>
-          <Text style={styles.fetchCounterText}>{fetchLimit - fetchCount}</Text>
-        </View>
-  )}
-      </View>
+      </TouchableOpacity>
+      {!allPhotosKept && (
+          <View style={styles.fetchCounterWrapper}>
+            <Text style={styles.fetchCounterText}>{fetchLimit - fetchCount}</Text>
+          </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -173,27 +171,25 @@ export default function PhotoSelectorScreen() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.night,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contentContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  buttonContainer: {
-    top: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    paddingBottom: 100,
+    borderWidth: 1,
+    // marginTop: 50,
+    flex: 1,
   },
   button: {
-    position: 'absolute',
     paddingVertical: 15,
     paddingHorizontal: 50,
     borderRadius: 100,
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.3,
-    // shadowRadius: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
     elevation: 5,
     bottom: 100,
     borderWidth: 1,
@@ -212,7 +208,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Outfit',
   },
-
   fetchCounterWrapper: {
     borderWidth: 1,
     borderColor: colors.detail,
@@ -221,7 +216,6 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    left: 135,
     marginBottom: 2,
   },
   fetchCounterText: {
@@ -233,10 +227,9 @@ const styles = StyleSheet.create({
   photoList: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 20,
   },
   photoContainer: {
-    position: 'relative',
+    // position: 'relative',
     margin: 1,
     borderRadius: 3,
     overflow: 'hidden',
