@@ -4,6 +4,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../types/types';
 import colors from '@/styles/theme';
 import badwords from '@/data/badwords.json';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../fireBaseConfig';
+import { setDoc, doc } from 'firebase/firestore';
+import { firestore } from '../../fireBaseConfig';
 
 type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignUp'>;
 
@@ -44,31 +48,43 @@ export default function SignUpScreen({ navigation }: Props) {
       keyboardDidShowListener.remove();
     };
   }, [translateY]);
-
-  const handleSignUp = () => {
-    // Perform validation checks here
+  
+  const handleSignUp = async () => {
     if (!username || !password || !email) {
       Alert.alert('Validation Error', 'All fields are required.');
       return;
     }
-
-    // Check if username contains profanity
+  
     if (badwords.some((badword) => username.toLowerCase().includes(badword))) {
       Alert.alert('Validation Error', 'Username contains inappropriate content. Please choose another.');
       return;
     }
-
-    // Validate password length
+  
     if (password.length < 6) {
       Alert.alert('Validation Error', 'Password must be at least 6 characters long.');
       return;
     }
-
-    console.log('Sign up with:', username, password, email);
-    // Navigate to the Main Tabs screen after sign up
-    navigation.navigate('Main');
-  };
   
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('Firebase User Created:', userCredential.user);
+  
+      // Save additional user info in Firestore
+      await setDoc(doc(firestore, 'users', userCredential.user.uid), {
+        username,
+        email,
+        createdAt: new Date(),
+      });
+  
+      console.log('User data saved to Firestore');
+      Alert.alert('Success', 'Account created successfully!');
+      navigation.navigate('Main');
+    } catch (error: any) {
+      console.error('Error signing up:', error);
+      Alert.alert('Error', error.message);
+    }
+  };
+        
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {

@@ -1,11 +1,13 @@
 import colors from '@/styles/theme';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/types/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { auth, firestore } from '../../fireBaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 
@@ -16,6 +18,8 @@ export default function ProfileScreen() {
     const [location, setLocation] = useState<string | null>('Fetching location...');
     
     const navigation = useNavigation<ProfileScreenNavigationProp>();
+
+    const [username, setUsername] = useState<string>('Fetching username...');
 
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -52,6 +56,34 @@ export default function ProfileScreen() {
         fetchLocation();
     }, []);
 
+    useEffect(() => {
+      const fetchUsername = async () => {
+          try {
+              const user = auth.currentUser;
+
+              if (!user) {
+                  Alert.alert('Error', 'No user logged in.');
+                  return;
+              }
+
+              const userDocRef = doc(firestore, 'users', user.uid);
+              const userDoc = await getDoc(userDocRef);
+
+              if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  setUsername(userData.username || 'No username');
+              } else {
+                  Alert.alert('Error', 'User data not found.');
+              }
+          } catch (error) {
+              console.error('Error fetching username:', error);
+              Alert.alert('Error', 'Failed to fetch username.');
+          }
+      };
+
+      fetchUsername();
+    }, []);
+
   return (
     <View style={styles.container}>
         <View style={styles.profileHeader}>
@@ -79,7 +111,7 @@ export default function ProfileScreen() {
                 </TouchableOpacity>
                 <View style={styles.profileInfoContainer}>
                     <View style={styles.usernameContainer}>
-                        <Text style={styles.username}>dersy.legend11</Text>
+                        <Text style={styles.username}>{username}</Text>
                         <Image source={require('../../assets/images/verified.png')} style={styles.verifiedIcon} />
                     </View>
                     <View style={styles.locationContainer}>
@@ -169,7 +201,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 20,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: colors.detail,
     width: '90%',
     paddingVertical: 20,

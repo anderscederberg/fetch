@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import colors from '@/styles/theme';
+import { addDoc, collection } from "firebase/firestore";
+import { firestore, auth } from "../../fireBaseConfig";
 
 export default function PhotoSelectorScreen() {
   const [permission, setPermission] = useState<boolean | null>(null);

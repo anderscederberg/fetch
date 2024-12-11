@@ -1,9 +1,32 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import colors from '@/styles/theme';
-
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { firestore } from '../../fireBaseConfig';
 
 export default function HomeScreen() {
+
+  const testFirestore = async () => {
+    try {
+      // Write data
+      await addDoc(collection(firestore, 'testCollection'), {
+        message: 'Hello, Firebase!',
+        timestamp: new Date(),
+      });
+
+      // Read data
+      const querySnapshot = await getDocs(collection(firestore, 'testCollection'));
+      querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} =>`, doc.data());
+      });
+
+      Alert.alert('Firestore is working!');
+    } catch (error) {
+      console.error('Error testing Firestore: ', error);
+      Alert.alert('Firestore test failed.');
+    }
+  };
+
   return (
     <View style={styles.container}>
                 <View style={styles.homeHeader}>
@@ -20,6 +43,9 @@ export default function HomeScreen() {
                 />
             </TouchableOpacity>
         </View>
+        <TouchableOpacity onPress={testFirestore} style={styles.testButton}>
+          <Text style={styles.testButtonText}>Test Firebase</Text>
+        </TouchableOpacity>
     </View>
   );
 }
@@ -71,6 +97,18 @@ const styles = StyleSheet.create({
   search: {
     width: 25,
     height: 25,
+  },
+  testButton: {
+    marginTop: 20,
+    backgroundColor: colors.volt,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
+  testButtonText: {
+    color: colors.night,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 
 
