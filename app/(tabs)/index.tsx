@@ -121,50 +121,64 @@ export default function PhotoSelectorScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.contentContainer}>
-        <FlatList
-          data={photos}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={2}
-          contentContainerStyle={styles.photoList}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity onPress={() => toggleKeepPhoto(index)} disabled={item.loading || !item.uri}>
-              <View style={styles.photoContainer}>
-                {item.loading ? (
-                  <ActivityIndicator size="large" color="#007AFF" style={styles.loaderSpinner} />
-                ) : item.uri ? (
-                  <>
-                    <Image source={{ uri: item.uri }} style={styles.photo} />
-                    {item.kept && (
-                      <View style={styles.overlay}>
-                        <Icon name="check" size={24} color="white" style={styles.checkmarkIcon} />
-                      </View>
-                    )}
-                  </>
-                ) : (
-                  <View style={styles.emptySlot} />
+<View style={styles.container}>
+  <View style={styles.contentContainer}>
+    <FlatList
+      data={photos}
+      keyExtractor={(item, index) => index.toString()}
+      numColumns={2}
+      contentContainerStyle={styles.photoList}
+      renderItem={({ item, index }) => (
+        <TouchableOpacity onPress={() => toggleKeepPhoto(index)} disabled={item.loading || !item.uri}>
+          <View style={styles.photoContainer}>
+            {item.loading ? (
+              <ActivityIndicator size="large" color="#007AFF" style={styles.loaderSpinner} />
+            ) : item.uri ? (
+              <>
+                <Image source={{ uri: item.uri }} style={styles.photo} />
+                {item.kept && (
+                  <View style={styles.overlay}>
+                    <Icon name="check" size={24} color="white" style={styles.checkmarkIcon} />
+                  </View>
                 )}
-              </View>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-      <TouchableOpacity
-          style={[styles.button, allPhotosKept ? styles.confirmButton : styles.fetchButton]}
-          onPress={allPhotosKept ? () => Alert.alert('Confirmed!') : fetchPhotos}
-          disabled={isAnyPhotoLoading || fetchCount >= fetchLimit}
-        >
-        <Text style={styles.buttonText}>
-          {allPhotosKept ? 'Confirm?' : 'fetch'}
-        </Text>
-      </TouchableOpacity>
-      {!allPhotosKept && (
-          <View style={styles.fetchCounterWrapper}>
-            <Text style={styles.fetchCounterText}>{fetchLimit - fetchCount}</Text>
+              </>
+            ) : (
+              <View style={styles.emptySlot} />
+            )}
           </View>
+        </TouchableOpacity>
       )}
-    </SafeAreaView>
+    />
+  </View>
+
+  {/* Fetch Counter */}
+  <View style={styles.fetchCounterWrapper}>
+    {allPhotosKept ? (
+      <Icon name="check" size={35} color={colors.volt} style={styles.checkmarkIcon} />
+    ) : (
+      <Text style={styles.fetchCounterText}>{fetchLimit - fetchCount}</Text>
+    )}
+  </View>
+
+  {/* Button */}
+  <TouchableOpacity
+    style={[
+      styles.button,
+      allPhotosKept ? styles.confirmButton : styles.fetchButton,
+    ]}
+    onPress={allPhotosKept ? () => Alert.alert('Confirmed!') : fetchPhotos}
+    disabled={isAnyPhotoLoading || fetchCount >= fetchLimit}
+  >
+    <Text
+      style={[
+        styles.buttonText,
+        allPhotosKept && styles.confirmButtonText,
+      ]}
+    >
+      {allPhotosKept ? 'confirm' : 'fetch'}
+    </Text>
+  </TouchableOpacity>
+</View>
   );
 }
 
@@ -172,43 +186,51 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.night,
     height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 56,
+    paddingHorizontal: 10,
+    
   },
   contentContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    // marginTop: 50,
-    flex: 1,
   },
   button: {
-    paddingVertical: 15,
-    paddingHorizontal: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 10,
     borderRadius: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 5,
-    bottom: 100,
     borderWidth: 1,
-    borderColor: colors.detail,
+    width: '95%',
+    alignSelf: 'center',
   },
   fetchButton: {
     backgroundColor: colors.night,
+    borderColor: colors.detail,
+  },
+  buttonText: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    fontFamily: 'Outfit',
+    color: colors.ivory,
   },
   confirmButton: {
     backgroundColor: colors.volt,
+    borderColor: colors.volt,
+    justifyContent: 'center'
   },
-  buttonText: {
-    color: colors.volt,
-    fontSize: 25,
-    fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Outfit',
+  confirmButtonText: {
+    color: colors.night,
+    fontWeight: 700,
   },
   fetchCounterWrapper: {
+    position: 'absolute',
     borderWidth: 1,
     borderColor: colors.detail,
     borderRadius: 100,
@@ -216,8 +238,11 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 2,
-  },
+    top: '81.75%',
+    left: '81.6%',
+    zIndex: 6,
+    backgroundColor: colors.night,
+  },  
   fetchCounterText: {
     fontSize: 35,
     fontWeight: '400',
@@ -227,9 +252,10 @@ const styles = StyleSheet.create({
   photoList: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 20,
   },
   photoContainer: {
-    // position: 'relative',
+    position: 'relative',
     margin: 1,
     borderRadius: 3,
     overflow: 'hidden',

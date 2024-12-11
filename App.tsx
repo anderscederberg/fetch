@@ -11,6 +11,16 @@ import SettingsScreen from './app/(tabs)/SettingsScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFonts } from 'expo-font';
 import { enableScreens } from 'react-native-screens';
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { firebaseConfig } from "./fireBaseConfig";
+
+const firebaseApp = initializeApp(firebaseConfig);
+
+export const firestore = getFirestore(firebaseApp);
+
+export const auth = getAuth(firebaseApp);
 
 const Stack = createNativeStackNavigator();
 

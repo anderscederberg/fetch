@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, } from 'react-native';
 import colors from '@/styles/theme';
 
+
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
