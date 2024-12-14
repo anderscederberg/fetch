@@ -156,6 +156,9 @@ export default function SignUpScreen({ navigation }: Props) {
         >
           <Text style={[styles.buttonText, !allFieldsFilled && styles.buttonTextDisabled]}>let's go</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.loginLink}>
+          <Text style={styles.loginText}>Already have an account? Login</Text>
+        </TouchableOpacity>
       </View>
     </View>  );
 }
@@ -224,4 +227,13 @@ buttonContainer: {
   buttonTextDisabled: {
     color: colors.night,
   },
+  loginLink: {
+    marginTop: 20,
+  },
+  loginText: {
+    color: colors.ivory,
+    fontFamily: 'Outfit',
+    fontSize: 14,
+  },
+  
 });

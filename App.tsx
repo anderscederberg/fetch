@@ -8,6 +8,7 @@ import PhotoSelectorScreen from './app/(tabs)';
 import HomeScreen from './app/(tabs)/HomeScreen';
 import ProfileScreen from './app/(tabs)/ProfileScreen';
 import SettingsScreen from './app/(tabs)/SettingsScreen';
+import LoginScreen from './app/(tabs)/LoginScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFonts } from 'expo-font';
 import { enableScreens } from 'react-native-screens';
@@ -157,6 +158,15 @@ export default function App() {
           name="SignUp"
           component={SignUpScreen}
           options={{ title: 'Sign Up', headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            title: 'Login', 
+            headerShown: false,
+            presentation: 'modal'
+          }}
         />
         <Stack.Screen
           name="Main"
