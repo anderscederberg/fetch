@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Alert,
+  Modal,
 } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import colors from '@/styles/theme';
@@ -22,9 +23,19 @@ export default function PhotoSelectorScreen() {
   const [fetchCount, setFetchCount] = useState(0);
   const fetchLimit = 6; // Maximum number of fetches allowed
   const isAnyPhotoLoading = photos.some((photo) => photo.loading);
+  const [modalVisible, setModalVisible] = useState(false);
 
+  const confirmPostUpload = () => {
+    setModalVisible(true);
+  };
+  
+  const handleUploadConfirmation = (confirm: boolean) => {
+    setModalVisible(false);
+    // if (confirm) {
+    //   uploadPost(); // Proceed to upload
+    // }
+  };
 
-  // Request photo permissions on mount
   useEffect(() => {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -168,7 +179,7 @@ export default function PhotoSelectorScreen() {
       styles.button,
       allPhotosKept ? styles.confirmButton : styles.fetchButton,
     ]}
-    onPress={allPhotosKept ? () => Alert.alert('Confirmed!') : fetchPhotos}
+    onPress={allPhotosKept ? confirmPostUpload : fetchPhotos}
     disabled={isAnyPhotoLoading || fetchCount >= fetchLimit}
   >
     <Text
@@ -180,6 +191,24 @@ export default function PhotoSelectorScreen() {
       {allPhotosKept ? 'confirm' : 'fetch'}
     </Text>
   </TouchableOpacity>
+  <Modal
+  visible={modalVisible}
+  transparent={true}
+  animationType="slide"
+>
+  <View style={styles.modalContainer}>
+    <Text style={styles.modalText}>Are you sure you want to post this collection?</Text>
+    <View style={styles.modalButtons}>
+      <TouchableOpacity style={styles.modalButtonNo} onPress={() => handleUploadConfirmation(false)}>
+        <Text style={styles.modalButtonTextNo}>cancel</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.modalButtonYes} onPress={() => handleUploadConfirmation(true)}>
+        <Text style={styles.modalButtonTextYes}>absolutely</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
 </View>
   );
 }
@@ -293,5 +322,63 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderWidth: 1,
     borderColor: colors.detail,
+  },
+  modalContainer: {
+    flexDirection: 'column',
+    alignSelf: 'center',
+    // borderWidth: 1,
+    // borderColor: colors.detail,
+    marginTop: '75%',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    width: '80%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.night,
+    borderRadius: 11,
+  },
+  modalText: {
+    fontFamily: 'Outfit',
+    color: colors.ivory,
+    fontSize: 20,
+    textAlign: 'center',
+    marginBottom: '8%',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    // borderWidth: 1,
+    // borderColor: colors.ivory,
+    width: '100%',
+  },
+  modalButtonYes: {
+    borderWidth: 1,
+    borderColor: colors.volt,
+    paddingTop: 5,
+    paddingBottom: 7,
+    paddingHorizontal: 15,
+    borderRadius: 100,
+    backgroundColor: colors.volt,
+  },
+  modalButtonNo: {
+    borderWidth: 1,
+    borderColor: colors.detail,
+    paddingTop: 5,
+    paddingBottom: 7,
+    paddingHorizontal: 15,
+    borderRadius: 100,    
+  },
+  modalButtonTextYes: {
+    color: colors.night,
+    fontFamily: 'Outfit',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  modalButtonTextNo: {
+    color: colors.ivory,
+    fontFamily: 'Outfit',
+    fontSize: 20,
+    fontWeight: 'regular',
   },
 });
