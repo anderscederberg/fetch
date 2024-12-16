@@ -1,14 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import colors from '@/styles/theme';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/types/types';
+import { auth } from '@/fireBaseConfig';
 
 type SettingsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Settings'>;
 
 export default function SettingsScreen() {
 const navigation = useNavigation<SettingsScreenNavigationProp>();
+
+const handleLogout = async () => {
+  try {
+    await auth.signOut();
+    Alert.alert('Success', 'You have been logged out.');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'SignUp' }], // Navigate to the Login screen
+    });
+  } catch (error) {
+    console.error('Error logging out:', error);
+    Alert.alert('Error', 'Failed to log out. Please try again.');
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -26,6 +41,12 @@ const navigation = useNavigation<SettingsScreenNavigationProp>();
         </TouchableOpacity>
         <Text style={styles.settingsText}>settings</Text>
       </View>
+      <TouchableOpacity 
+        style={styles.logoutButton} 
+        onPress={handleLogout}
+      >
+        <Text style={styles.logoutText}>Log Out</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -80,6 +101,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit',
     color: colors.ivory,
     fontSize: 15,
-  }
+  },
+  logoutButton: {
+    marginTop: 30,
+    paddingVertical: 15,
+    borderRadius: 10,
+    backgroundColor: colors.volt,
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: colors.night,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 
 });
