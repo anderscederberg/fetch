@@ -2,14 +2,6 @@
   "expo": {
     "name": "fetch",
     "slug": "fetch",
-    "extra": {
-      "FIREBASE_API_KEY": "AIzaSyDShBudfMzebjChzrmRVjNubMwsAi_LG4Q",
-      "FIREBASE_AUTH_DOMAIN": "fetch-by-dersy.firebaseapp.com",
-      "FIREBASE_PROJECT_ID": "fetch-by-dersy",
-      "FIREBASE_STORAGE_BUCKET": "fetch-by-dersy.appspot.com",
-      "FIREBASE_MESSAGING_SENDER_ID": "422033426571",
-      "FIREBASE_APP_ID": "1:422033426571:ios:b769c163c9b8eeb847ec8e"
-    },    
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

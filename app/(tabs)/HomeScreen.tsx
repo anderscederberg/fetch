@@ -1,51 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import colors from '@/styles/theme';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { firestore } from '../../fireBaseConfig';
 
 export default function HomeScreen() {
-
-  const testFirestore = async () => {
+  const [posts, setPosts] =  useState<{ id: String; imageUrl: string }[]>([]);
+  
+  const fetchPosts = async () => {
     try {
-      // Write data
-      await addDoc(collection(firestore, 'testCollection'), {
-        message: 'Hello, Firebase!',
-        timestamp: new Date(),
-      });
+      const postsRef = collection(firestore, 'posts');
+      const q = query(postsRef, orderBy('timestamp', 'desc'));
+      const querySnapshot = await getDocs(q);
 
-      // Read data
-      const querySnapshot = await getDocs(collection(firestore, 'testCollection'));
-      querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} =>`, doc.data());
-      });
+      const fetchedPosts = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        imageUrl: doc.data().imageUrl,
+      }));
 
-      Alert.alert('Firestore is working!');
+      setPosts(fetchedPosts);
     } catch (error) {
-      console.error('Error testing Firestore: ', error);
-      Alert.alert('Firestore test failed.');
+      console.error('Error fetching posts:', error);
     }
   };
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   return (
     <View style={styles.container}>
-                <View style={styles.homeHeader}>
-            <Text style={styles.fetchText}>fetch</Text>
-            <Text style={styles.homeText}>home</Text>
-            <TouchableOpacity 
-                style={styles.searchWrapper}
-                // onPress={() => navigation.navigate('Settings')}
-            >
-                <Image 
-                    source={require('../../assets/images/search.png')} 
-                    style={styles.search}
-                    resizeMode="contain"
-                />
-            </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={testFirestore} style={styles.testButton}>
-          <Text style={styles.testButtonText}>Test Firebase</Text>
+      <View style={styles.homeHeader}>
+        <Text style={styles.fetchText}>fetch</Text>
+        <Text style={styles.homeText}>home</Text>
+        <TouchableOpacity 
+          style={styles.searchWrapper}
+        >
+          <Image 
+            source={require('../../assets/images/search.png')} 
+            style={styles.search}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
+      </View>
     </View>
   );
 }

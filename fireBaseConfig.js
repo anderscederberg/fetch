@@ -1,18 +1,20 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import Constants from "expo-constants";
+import { getStorage } from "firebase/storage";
 
-const firebaseConfig = {
-  apiKey: Constants.manifest.extra.FIREBASE_API_KEY,
-  authDomain: Constants.manifest.extra.FIREBASE_AUTH_DOMAIN,
-  projectId: Constants.manifest.extra.FIREBASE_PROJECT_ID,
-  storageBucket: Constants.manifest.extra.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: Constants.manifest.extra.FIREBASE_MESSAGING_SENDER_ID,
-  appId: Constants.manifest.extra.FIREBASE_APP_ID,
-};
+export const firebaseConfig = {
+    apiKey: "AIzaSyDShBudfMzebjChzrmRVjNubMwsAi_LG4Q",
+    authDomain: "fetch-by-dersy.firebaseapp.com",
+    projectId: "fetch-by-dersy",
+    storageBucket: "fetch-by-dersy.firebasestorage.app",
+    messagingSenderId: "422033426571",
+    appId: "1:422033426571:ios:b769c163c9b8eeb847ec8e",
+  };
 
-const app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
-export const firestore = getFirestore(app);
+  export const auth = getAuth(app);
+  export const firestore = getFirestore(app);
+  export const storage = getStorage(app);
+

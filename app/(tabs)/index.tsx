@@ -16,6 +16,52 @@ import * as MediaLibrary from 'expo-media-library';
 import colors from '@/styles/theme';
 import { addDoc, collection } from "firebase/firestore";
 import { firestore, auth } from "../../fireBaseConfig";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import * as ImageManipulator from "expo-image-manipulator";
+import { Photo } from '@/types/types';
+
+const cropAndUploadPhotos = async (photos: Photo[]): Promise<string[]> => {
+  try {
+    const storage = getStorage();
+    const downloadURLs: string[] = [];
+
+    for (let i = 0; i < photos.length; i++) {
+      const photo = photos[i];
+      if (!photo.kept || !photo.uri) continue;
+
+      // Crop and convert the photo to a 1:1 square ratio
+      const croppedImage = await ImageManipulator.manipulateAsync(
+        photo.uri,
+        [
+          { crop: { originX: 0, originY: 0, width: 300, height: 300 } }, // Adjust dimensions if needed
+        ],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
+      // Convert the cropped image to a blob
+      const response = await fetch(croppedImage.uri);
+      const blob = await response.blob();
+
+      // Generate a unique file name for the photo
+      const fileName = `posts/${auth.currentUser?.uid || "user"}_${Date.now()}_${i}.jpg`;
+
+      // Upload the photo to Firebase Storage
+      const storageRef = ref(storage, fileName);
+      await uploadBytes(storageRef, blob);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+      downloadURLs.push(downloadURL);
+
+      console.log(`Photo ${i + 1} uploaded successfully:`, downloadURL);
+    }
+
+    return downloadURLs;
+  } catch (error) {
+    console.error("Error uploading photos:", error);
+    throw error;
+  }
+};
 
 export default function PhotoSelectorScreen() {
   const [permission, setPermission] = useState<boolean | null>(null);
@@ -29,13 +75,31 @@ export default function PhotoSelectorScreen() {
     setModalVisible(true);
   };
   
-  const handleUploadConfirmation = (confirm: boolean) => {
+  const handleUploadConfirmation = async (confirm: boolean) => {
     setModalVisible(false);
-    // if (confirm) {
-    //   uploadPost(); // Proceed to upload
-    // }
+  
+    if (confirm) {
+      try {
+        const keptPhotos = photos.filter((photo) => photo.kept); // Only process kept photos
+        if (keptPhotos.length !== 6) {
+          Alert.alert("Error", "Please select exactly 6 photos.");
+          return;
+        }
+  
+        // Crop and upload all photos
+        const downloadURLs = await cropAndUploadPhotos(keptPhotos);
+  
+        if (downloadURLs.length === 6) {
+          Alert.alert("Success", "All photos uploaded successfully!");
+        } else {
+          Alert.alert("Error", "Some photos failed to upload. Please try again.");
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to upload photos. Please try again.");
+      }
+    }
   };
-
+    
   useEffect(() => {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
