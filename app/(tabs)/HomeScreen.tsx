@@ -1,33 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
 import colors from '@/styles/theme';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { firestore } from '../../fireBaseConfig';
 
 export default function HomeScreen() {
-  const [posts, setPosts] =  useState<{ id: String; imageUrl: string }[]>([]);
+  const [posts, setPosts] =  useState<{ id: string; imageUrl: string }[]>([]);
   
   const fetchPosts = async () => {
     try {
       const postsRef = collection(firestore, 'posts');
       const q = query(postsRef, orderBy('timestamp', 'desc'));
       const querySnapshot = await getDocs(q);
-
-      const fetchedPosts = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        imageUrl: doc.data().imageUrl,
-      }));
-
+  
+      const fetchedPosts = querySnapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          imageUrl: doc.data().imageUrl,
+        }))
+        .filter((post) => post.imageUrl && post.imageUrl.startsWith('https://'));
+  
       setPosts(fetchedPosts);
+      console.log('Filtered posts:', fetchedPosts);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
+      useEffect(() => {
+      fetchPosts();
+    }, []);
+  
+    useEffect(() => {
+    console.log('Posts state updated:', posts); // Logs posts state whenever it updates
+  }, [posts]);
+  
   return (
     <View style={styles.container}>
       <View style={styles.homeHeader}>
@@ -43,6 +49,27 @@ export default function HomeScreen() {
           />
         </TouchableOpacity>
       </View>
+      <TouchableOpacity style={styles.refreshButton} onPress={fetchPosts}>
+          <Text style={styles.refreshText}>Refresh</Text>
+      </TouchableOpacity>
+      <FlatList
+  data={posts}
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => {
+    console.log('Rendering item:', item.imageUrl); // Log each image URL
+    return (
+      <View style={{ marginBottom: 10, backgroundColor: 'lightgrey' }}>
+        <Text style={{ color: 'black' }}>Image URL: {item.imageUrl}</Text>
+        <Image
+          source={{ uri: item.imageUrl }}
+          style={{ width: '100%', height: 200, backgroundColor: 'grey' }}
+          onError={(e) => console.error('Image load error:', e.nativeEvent.error)} // Debug image errors
+        />
+      </View>
+    );
+  }}
+  showsVerticalScrollIndicator={false}
+/>
     </View>
   );
 }
@@ -107,6 +134,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-
+  postContainer: {
+    marginBottom: 15,
+    borderRadius: 10,
+    overflow: 'hidden',
+    width: '90%',
+    alignSelf: 'center',
+  },
+  postImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+  },
+  refreshButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    backgroundColor: colors.volt,
+  },
+  refreshText: {
+    color: colors.night,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 
 });

@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import colors from '@/styles/theme';
-import { addDoc, collection } from "firebase/firestore";
-import { firestore, auth } from "../../fireBaseConfig";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { firestore, auth, storage } from "../../fireBaseConfig";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Photo } from '@/types/types';
@@ -74,32 +74,53 @@ export default function PhotoSelectorScreen() {
   const confirmPostUpload = () => {
     setModalVisible(true);
   };
-  
+    
   const handleUploadConfirmation = async (confirm: boolean) => {
-    setModalVisible(false);
+    if (!confirm) {
+      setModalVisible(false);
+      return;
+    }
   
-    if (confirm) {
-      try {
-        const keptPhotos = photos.filter((photo) => photo.kept); // Only process kept photos
-        if (keptPhotos.length !== 6) {
-          Alert.alert("Error", "Please select exactly 6 photos.");
-          return;
-        }
-  
-        // Crop and upload all photos
-        const downloadURLs = await cropAndUploadPhotos(keptPhotos);
-  
-        if (downloadURLs.length === 6) {
-          Alert.alert("Success", "All photos uploaded successfully!");
-        } else {
-          Alert.alert("Error", "Some photos failed to upload. Please try again.");
-        }
-      } catch (error) {
-        Alert.alert("Error", "Failed to upload photos. Please try again.");
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error('No user logged in');
+        return;
       }
+  
+      const postsRef = collection(firestore, 'posts');
+      const uploadPromises = photos
+        .filter((photo) => photo.uri) // Ensure photo has a valid URI
+        .map(async (photo) => {
+          // Upload each photo to Firebase Storage
+          const photoRef = ref(storage, `posts/${user.uid}_${Date.now()}.jpg`);
+          const response = await fetch(photo.uri);
+          const blob = await response.blob();
+          await uploadBytes(photoRef, blob);
+  
+          // Get the public download URL
+          const downloadUrl = await getDownloadURL(photoRef);
+  
+          // Save the post to Firestore
+          await addDoc(postsRef, {
+            userId: user.uid,
+            imageUrl: downloadUrl,
+            timestamp: serverTimestamp(),
+          });
+  
+          return downloadUrl;
+        });
+  
+      await Promise.all(uploadPromises);
+      console.log('Photos uploaded successfully');
+      Alert.alert('Success', 'Your photos have been posted!');
+      setModalVisible(false);
+    } catch (error) {
+      console.error('Error uploading posts:', error);
+      Alert.alert('Error', 'Failed to upload photos.');
     }
   };
-    
+        
   useEffect(() => {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
