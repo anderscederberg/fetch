@@ -19,6 +19,7 @@ import { firestore, auth, storage } from "../../fireBaseConfig";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as ImageManipulator from "expo-image-manipulator";
 import { Photo } from '@/types/types';
+import uuid from 'react-native-uuid';
 
 const cropAndUploadPhotos = async (photos: Photo[]): Promise<string[]> => {
   try {
@@ -93,7 +94,8 @@ export default function PhotoSelectorScreen() {
         .filter((photo) => photo.uri) // Ensure photo has a valid URI
         .map(async (photo) => {
           // Upload each photo to Firebase Storage
-          const photoRef = ref(storage, `posts/${user.uid}_${Date.now()}.jpg`);
+          const uniqueFilename = `${user.uid}_${Date.now()}_${uuid.v4()}.jpg`
+          const photoRef = ref(storage, `posts/${uniqueFilename}`);
           const response = await fetch(photo.uri);
           const blob = await response.blob();
           await uploadBytes(photoRef, blob);
