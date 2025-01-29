@@ -5,7 +5,7 @@ import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { firestore } from '../../fireBaseConfig';
 
 export default function HomeScreen() {
-  const [posts, setPosts] =  useState<{ id: string; imageUrl: string }[]>([]);
+  const [posts, setPosts] = useState<{ id: string; imageUrls: string[] }[]>([]);
 
  const [loading, setLoading] = useState(false);
   
@@ -14,16 +14,18 @@ export default function HomeScreen() {
   setPosts([]);
   try {
     const postsRef = collection(firestore, 'posts');
-    const q = query(postsRef, orderBy('timestamp', 'desc'), limit(1));
+    const q = query(postsRef, orderBy('timestamp', 'desc'), limit(10)); // Fetch last 10 posts
     const querySnapshot = await getDocs(q);
+
     const fetchedPosts = querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      imageUrl: doc.data().imageUrl,
+      imageUrls: doc.data().imageUrls || [],
     }));
+
     setPosts(fetchedPosts);
-    console.log('Fetched one post:', fetchedPosts);
+    console.log('Fetched posts:', fetchedPosts);
   } catch (error) {
-    console.error('Error fetching post:', error);
+    console.error('Error fetching posts:', error);
   } finally {
     setLoading(false);
   }
@@ -57,11 +59,20 @@ export default function HomeScreen() {
       </TouchableOpacity>
       <FlatList
   data={posts}
-  keyExtractor={(item) => item.id}
+  keyExtractor={(post) => post.id}
   renderItem={({ item }) => (
-    <View style={{ margin: 10 }}>
-      <Text>ID: {item.id}</Text>
-      <Text>URL: {item.imageUrl}</Text>
+    <View style={{ marginBottom: 20, padding: 10, backgroundColor: 'red' }}>
+      <Text style={{ color: 'white', fontSize: 16 }}>Post ID: {item.id}</Text>
+      
+      {/* Render all images from this post */}
+      {item.imageUrls.map((url: string, index: number) => (
+  <Image
+    key={index}
+    source={{ uri: url }}
+    style={styles.postImage}
+    onError={(e) => console.error('Image load error:', url, e.nativeEvent.error)}
+  />
+))}
     </View>
   )}
   style={{ flex: 1, backgroundColor: 'yellow' }}

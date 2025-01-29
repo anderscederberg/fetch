@@ -89,40 +89,44 @@ export default function PhotoSelectorScreen() {
         return;
       }
   
-      const postsRef = collection(firestore, 'posts');
-      const uploadPromises = photos
-        .filter((photo) => photo.uri) // Ensure photo has a valid URI
-        .map(async (photo) => {
-          // Upload each photo to Firebase Storage
-          const uniqueFilename = `${user.uid}_${Date.now()}_${uuid.v4()}.jpg`
-          const photoRef = ref(storage, `posts/${uniqueFilename}`);
+      // Upload images to Firebase Storage and get URLs
+      const photoUrls = await Promise.all(
+        photos.map(async (photo) => {
+          if (!photo.uri) return null; // Skip empty slots
           const response = await fetch(photo.uri);
           const blob = await response.blob();
-          await uploadBytes(photoRef, blob);
+          const filename = `posts/${user.uid}_${Date.now()}_${Math.random()}.jpg`;
+          const storageRef = ref(storage, filename);
+          await uploadBytes(storageRef, blob);
+          return await getDownloadURL(storageRef); // Get Firebase URL
+        })
+      );
   
-          // Get the public download URL
-          const downloadUrl = await getDownloadURL(photoRef);
+      // Remove null values
+      const validPhotoUrls = photoUrls.filter(url => url !== null);
   
-          // Save the post to Firestore
-          await addDoc(postsRef, {
-            userId: user.uid,
-            imageUrl: downloadUrl,
-            timestamp: serverTimestamp(),
-          });
+      if (validPhotoUrls.length === 0) {
+        console.error('No valid images to upload');
+        return;
+      }
   
-          return downloadUrl;
-        });
+      // Save to Firestore with Firebase URLs
+      const postRef = collection(firestore, 'posts');
+      await addDoc(postRef, {
+        userId: user.uid,
+        imageUrls: validPhotoUrls, // Store all images in an array
+        timestamp: serverTimestamp(),
+      });
   
-      await Promise.all(uploadPromises);
-      console.log('Photos uploaded successfully');
+      console.log('Post uploaded successfully with multiple images:', validPhotoUrls);
       Alert.alert('Success', 'Your photos have been posted!');
       setModalVisible(false);
     } catch (error) {
-      console.error('Error uploading posts:', error);
+      console.error('Error uploading post:', error);
       Alert.alert('Error', 'Failed to upload photos.');
     }
   };
-        
+            
   useEffect(() => {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
