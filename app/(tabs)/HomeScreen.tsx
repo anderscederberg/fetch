@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 import colors from '@/styles/theme';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { firestore } from '../../fireBaseConfig';
+import Carousel from 'react-native-reanimated-carousel';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function HomeScreen() {
-  const [posts, setPosts] = useState<{ id: string; imageUrls: string[] }[]>([]);
+const [posts, setPosts] = useState<{ id: string; imageUrls: string[]; }[]>([]);
 
  const [loading, setLoading] = useState(false);
   
@@ -61,23 +64,29 @@ export default function HomeScreen() {
   data={posts}
   keyExtractor={(post) => post.id}
   renderItem={({ item }) => (
-    <View style={{ marginBottom: 20, padding: 10, backgroundColor: 'red' }}>
-      <Text style={{ color: 'white', fontSize: 16 }}>Post ID: {item.id}</Text>
-      
-      {/* Render all images from this post */}
-      {item.imageUrls.map((url: string, index: number) => (
-  <Image
-    key={index}
-    source={{ uri: url }}
-    style={styles.postImage}
-    onError={(e) => console.error('Image load error:', url, e.nativeEvent.error)}
-  />
-))}
+    <View style={styles.postContainer}>
+      <Text style={{ display: 'none' }}>Post ID: {item.id}</Text>
+
+      {/* Carousel for post images */}
+      <Carousel
+        loop={false}
+        width={SCREEN_WIDTH * 0.9} // Slight margin on both sides
+        height={300} // Adjust based on UI preference
+        autoPlay={false}
+        data={item.imageUrls} // Pass the array of image URLs
+        renderItem={({ item }) => (
+          <Image
+            source={{ uri: item }}
+            style={styles.postImage}
+            onError={(e) => console.error('Image load error:', item, e.nativeEvent.error)}
+          />
+        )}
+      />
     </View>
   )}
-  style={{ flex: 1, backgroundColor: 'yellow' }}
-/>
-    </View>
+/>    
+
+</View>
   );
 }
 
@@ -129,24 +138,27 @@ const styles = StyleSheet.create({
     height: 25,
   },
   postContainer: {
-    marginBottom: 15,
-    borderRadius: 10,
+    marginBottom: 20,
     overflow: 'hidden',
-    width: '90%',
+    borderColor: colors.detail,
+    borderWidth: 1,
+    borderRadius: 10,
+    width: '100%',
     alignSelf: 'center',
-    backgroundColor: 'red',
+    backgroundColor: colors.night,
+    padding: 11,
   },
   postImage: {
     width: '100%',
-    height: 200,
-    borderRadius: 10,
-    backgroundColor: 'blue',
+    height: '100%',
+    marginBottom: 100,
   },
   refreshButton: {
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
     backgroundColor: colors.volt,
+    marginBottom: 20,
   },
   refreshText: {
     color: colors.night,
